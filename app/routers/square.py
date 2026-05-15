@@ -534,9 +534,12 @@ def disconnect_connection(
 
     now = utc_now()
 
-    # ✅ revoke token with Square before clearing locally
+    # Attempt to revoke token with Square — ignore errors (token may already be invalid)
     if connection.access_token:
-        revoke_square_token(connection.access_token)
+        try:
+            revoke_square_token(connection.access_token)
+        except Exception:
+            pass  # non-critical: proceed with local disconnect regardless
 
     connection.connection_status = "disconnected"
     connection.auto_sync_enabled = False
@@ -566,9 +569,12 @@ def delete_connection(
 
     now = utc_now()
 
-    # ✅ revoke token with Square before clearing locally
+    # Attempt to revoke token with Square — ignore errors (token may already be invalid)
     if connection.access_token:
-        revoke_square_token(connection.access_token)
+        try:
+            revoke_square_token(connection.access_token)
+        except Exception:
+            pass  # non-critical: proceed with local delete regardless
 
     connection.connection_status = "deleted"
     connection.auto_sync_enabled = False
